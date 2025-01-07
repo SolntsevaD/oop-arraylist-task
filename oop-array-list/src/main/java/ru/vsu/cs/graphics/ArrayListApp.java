@@ -4,13 +4,15 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import ru.vsu.cs.logic.MyArrayList;
 
 import java.util.Arrays;
-import java.util.List;
 
 public class ArrayListApp extends Application {
     private MyArrayList<String> list;
@@ -26,60 +28,64 @@ public class ArrayListApp extends Application {
         inputField = new TextField();
         inputField.setPromptText("Введите элемент или массив (например: Apple, Banana, Cherry)");
 
-        VBox buttonPanel = new VBox(10);
+        GridPane buttonPanel = new GridPane();
+        buttonPanel.setVgap(10);
+        buttonPanel.setHgap(10);
         buttonPanel.setStyle("-fx-padding: 10;");
 
         outputArea = new TextArea();
         outputArea.setEditable(false);
         outputArea.setPrefHeight(200);
 
-        addButton(buttonPanel, "Добавить элемент (add)", this::addElement);
-        addButton(buttonPanel, "Добавить все элементы (разделенные запятой) (addAll)", this::addAll);
-        addButton(buttonPanel, "Добавить в начало (addFirst)", this::addFirst);
-        addButton(buttonPanel, "Добавить в конец (addLast)", this::addLast);
-        addButton(buttonPanel, "Очистить список (clear)", this::clearList);
-        addButton(buttonPanel, "Содержит ли (элемент) (contains)", this::containsElement);
-        addButton(buttonPanel, "Содержит ли все элементы (разделенные запятой) (containsAll)", this::containsAll);
-        addButton(buttonPanel, "Получить (по индексу) (get)", this::getElement);
-        addButton(buttonPanel, "Получить первый элемент (getFirst)", this::getFirst);
-        addButton(buttonPanel, "Получить последний элемент (getLast)", this::getLast);
-        addButton(buttonPanel, "Найти индекс элемента (indexOf)", this::indexOf);
-        addButton(buttonPanel, "Найти индекс элемента с конца (lastIndexOf)", this::lastIndexOf);
-        addButton(buttonPanel, "Удалить по индексу (remove(index))", this::removeElement);
-        addButton(buttonPanel, "Удалить по значению (remove(value))", this::removeObject);
-        addButton(buttonPanel, "Удалить первый элемент (removeFirst)", this::removeFirst);
-        addButton(buttonPanel, "Удалить последний элемент (removeLast)", this::removeLast);
-        addButton(buttonPanel, "Вывести развернутый список (reversed)", this::reversed);
-        addButton(buttonPanel, "Установить значение (индекс, значение) (set)", this::setElement);
-        addButton(buttonPanel, "Размер списка (size)", this::size);
-        addButton(buttonPanel, "Перевести в массив (toArray)", this::toArray);
+        addButton(buttonPanel, "Добавить элемент (add)", this::addElement, 0, 0);
+        addButton(buttonPanel, "Добавить все элементы (разделенные запятой) (addAll)", this::addAll, 0, 1);
+        addButton(buttonPanel, "Добавить в начало (addFirst)", this::addFirst, 0, 2);
+        addButton(buttonPanel, "Добавить в конец (addLast)", this::addLast, 0, 3);
+        addButton(buttonPanel, "Очистить список (clear)", this::clearList, 0, 4);
+        addButton(buttonPanel, "Содержит ли (элемент) (contains)", this::containsElement, 0, 5);
+        addButton(buttonPanel, "Содержит ли все элементы (разделенные запятой) (containsAll)", this::containsAll, 0, 6);
+        addButton(buttonPanel, "Получить (по индексу) (get)", this::getElement, 0, 7);
+        addButton(buttonPanel, "Получить первый элемент (getFirst)", this::getFirst, 0, 8);
+        addButton(buttonPanel, "Получить последний элемент (getLast)", this::getLast, 0, 9);
+
+        addButton(buttonPanel, "Найти индекс элемента (indexOf)", this::indexOf, 1, 0);
+        addButton(buttonPanel, "Найти индекс элемента с конца (lastIndexOf)", this::lastIndexOf, 1, 1);
+        addButton(buttonPanel, "Удалить по индексу (remove(index))", this::removeElement, 1, 2);
+        addButton(buttonPanel, "Удалить по значению (remove(value))", this::removeObject, 1, 3);
+        addButton(buttonPanel, "Удалить первый элемент (removeFirst)", this::removeFirst, 1, 4);
+        addButton(buttonPanel, "Удалить последний элемент (removeLast)", this::removeLast, 1, 5);
+        addButton(buttonPanel, "Вывести развернутый список (reversed)", this::reversed, 1, 6);
+        addButton(buttonPanel, "Установить значение (индекс, значение) (set)", this::setElement, 1, 7);
+        addButton(buttonPanel, "Размер списка (size)", this::size, 1, 8);
+        addButton(buttonPanel, "Перевести в массив (toArray)", this::toArray, 1, 9);
 
         VBox root = new VBox(10, inputPanel, inputField, buttonPanel, outputArea);
         root.setStyle("-fx-padding: 20;");
 
-        Scene scene = new Scene(root, 600, 900);
+        Scene scene = new Scene(root, 600, 600);
         primaryStage.setTitle("ArrayListApp");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
 
-    private void addButton(VBox panel, String label, EventHandler<ActionEvent> action) {
-        Button button = new Button(label);
+    private void addButton(GridPane gridPane, String text, EventHandler<ActionEvent> action, int col, int row) {
+        Button button = new Button(text);
         button.setOnAction(action);
-        panel.getChildren().add(button);
+        gridPane.add(button, col, row);
     }
+
 
     private void addElement(ActionEvent e) {
         String input = inputField.getText();
-        list.add(input);
+        list.addLast(input);
         outputArea.appendText("Добавлен элемент '" + input + "' в список\n");
         inputField.clear();
     }
 
     private void addAll(ActionEvent e) {
         String input = inputField.getText();
-        List<String> items = Arrays.asList(input.split(","));
-        list.addAll(items);
+        MyArrayList<String> items = MyArrayList.asList(input.split(","));
+        list.addAll(0, items);
         outputArea.appendText("Добавлены элементы '" + input + "' множественными элементами\n");
         inputField.clear();
     }
@@ -113,7 +119,7 @@ public class ArrayListApp extends Application {
 
     private void containsAll(ActionEvent e) {
         String input = inputField.getText();
-        List<String> otherList = Arrays.asList(input.split(","));
+        MyArrayList<String> otherList = MyArrayList.asList(input.split(","));
         boolean containsAll = list.containsAll(otherList);
         outputArea.appendText("Содержит все элементы '" + input + "': " + containsAll + "\n");
         inputField.clear();
